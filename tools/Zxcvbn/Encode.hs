@@ -23,7 +23,6 @@ module Zxcvbn.Encode
 -- Imports:
 import Data.Binary (Binary)
 import Data.Binary.Instances ()
-import qualified Codec.Compression.GZip as GZip
 import qualified Data.Binary as Binary
 import qualified Data.ByteString.Base64.Lazy as Base64
 
@@ -44,7 +43,6 @@ header m =
           , "import Data.HashMap.Strict (HashMap)\n"
           , "import qualified Data.HashMap.Strict as HashMap\n"
           , "import Data.Text (Text)\n"
-          , "import qualified Codec.Compression.GZip as GZip\n"
           , "import qualified Data.ByteString.Base64.Lazy as Base64\n"
           , "import qualified Data.Binary as Binary\n"
           , "import Data.Binary.Instances ()\n"
@@ -58,12 +56,11 @@ encode n t a =
           , n <> " =\n"
           , "  let decode = " <> decode <> "\n"
           , "  in  decode "
-          , show . Base64.encode . GZip.compress . Binary.encode $ a
+          , show . Base64.encode . Binary.encode $ a
           , "\n"
           ]
   where
     decode =
       mconcat [ "Binary.decode . "
-              , "GZip.decompress . "
               , "Base64.decodeLenient"
               ]
